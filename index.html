@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convergente vs hiperconvergente — Data Center DNTIC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF7;
+    --ink:#1B1D1A;
+    --ink-soft:#5B5D57;
+    --ink-faint:#8A8A82;
+    --line:rgba(27,29,26,0.14);
+    --line-soft:rgba(27,29,26,0.08);
+    --hci:#B5562B;
+    --hci-soft:#F4E4DB;
+    --hci-line:#D98E68;
+    --conv:#3E6B8A;
+    --conv-soft:#E3EBF0;
+    --conv-line:#8FB4CB;
+    --warn-bg:#FBEAE3;
+    --warn-line:#E3B498;
+    --warn-ink:#8C3A1B;
+    --card:#FFFFFF;
+    --r:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background-color:var(--bg);
+    background-image:radial-gradient(var(--line-soft) 1px, transparent 1px);
+    background-size:18px 18px;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  .page{max-width:960px;margin:0 auto;padding:0 28px 80px;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  header{padding:56px 0 28px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 14px;}
+  h1{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:30px;line-height:1.3;margin:0 0 14px;letter-spacing:-0.01em;}
+  .sub{font-size:16px;color:var(--ink-soft);max-width:620px;margin:0;}
+  nav{position:sticky;top:0;z-index:10;background:var(--bg);display:flex;gap:4px;padding:14px 0;border-bottom:1px solid var(--line);overflow-x:auto;}
+  nav button.navlink{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;padding:8px 14px;border-radius:999px;border:1px solid transparent;white-space:nowrap;transition:background .15s,color .15s;background:none;cursor:pointer;}
+  nav button.navlink:hover{background:var(--line-soft);}
+  nav button.navlink.active{color:var(--ink);border-color:var(--line);background:var(--card);}
+  section{padding:52px 0;border-bottom:1px solid var(--line-soft);}
+  section:last-of-type{border-bottom:none;}
+  h2{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:500;margin:0 0 8px;}
+  h3.sub-h{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;margin:28px 0 10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;}
+  .lede{color:var(--ink-soft);font-size:15px;max-width:640px;margin:0 0 32px;}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 16px;}
+  .metric .num{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;}
+  .metric .lab{font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
+  .objetivo{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--ink-faint);border-radius:0 var(--r) var(--r) 0;padding:16px 20px;margin-top:24px;font-size:14px;color:var(--ink-soft);}
+  .objetivo b{color:var(--ink);font-weight:500;}
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .arch-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;}
+  .arch-card.featured{border:2px solid var(--conv-line);}
+  .arch-card .tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin-bottom:14px;}
+  .tag-hci{background:var(--hci-soft);color:var(--hci);}
+  .tag-conv{background:var(--conv-soft);color:var(--conv);}
+  .arch-card svg{width:100%;display:block;}
+  .arch-card p{font-size:13px;color:var(--ink-soft);margin:14px 0 0;}
+  .topo{margin-top:20px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;}
+  .topo svg{width:100%;display:block;}
+  .topo p{font-size:13px;color:var(--ink-soft);margin:14px 0 0;text-align:center;}
+  .callout{display:flex;gap:14px;background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:var(--r);padding:16px 18px;margin:24px 0;}
+  .callout .ic{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--warn-ink);font-size:16px;line-height:1.4;}
+  .callout p{margin:0;font-size:14px;color:var(--warn-ink);line-height:1.55;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:18px 0;}
+  th,td{text-align:left;padding:10px 11px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+  th{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;}
+  td.conv-col{border-left:2px solid var(--conv-line);}
+  td.hci-col{border-left:2px solid var(--hci-line);}
+  .note{font-size:12px;color:var(--ink-faint);margin-top:8px;}
+  .adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px;}
+  .adv-card{border-radius:var(--r);padding:18px 20px;}
+  .adv-conv{background:var(--conv-soft);border:1px solid var(--conv-line);}
+  .adv-hci{background:var(--hci-soft);border:1px solid var(--hci-line);}
+  .adv-card h3{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.04em;margin:0 0 12px;}
+  .adv-conv h3{color:var(--conv);}
+  .adv-hci h3{color:var(--hci);}
+  .adv-card ul{margin:0;padding:0;list-style:none;}
+  .adv-card li{font-size:14px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+  .adv-card li:last-child{border-bottom:none;}
+  .reframe{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:24px;}
+  .reframe .wrong{font-size:14px;color:var(--ink-faint);text-decoration:line-through;margin:0 0 10px;}
+  .reframe .right{font-size:16px;font-weight:500;margin:0;}
+  .rec-box{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:26px 26px;margin-bottom:24px;}
+  .rec-box .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--conv-line);margin:0 0 10px;}
+  .rec-box p{margin:0;font-size:15px;line-height:1.65;color:#F1F0EA;}
+  .steps{margin:0;padding:0;list-style:none;counter-reset:s;}
+  .steps li{counter-increment:s;display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line-soft);font-size:14px;}
+  .steps li:last-child{border-bottom:none;}
+  .steps li::before{content:counter(s);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--conv);width:22px;height:22px;border:1px solid var(--conv-line);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .lock-bar-row{margin-bottom:16px;}
+  .lock-bar-row .lab{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-bottom:6px;}
+  .lock-track{height:14px;background:var(--line-soft);border-radius:7px;overflow:hidden;display:flex;}
+  .lock-seg{height:100%;}
+  footer{padding:32px 0 0;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.04em;}
+  @media (max-width:680px){
+    .metrics{grid-template-columns:1fr 1fr;}
+    .cols2{grid-template-columns:1fr;}
+    .adv-grid{grid-template-columns:1fr;}
+    h1{font-size:24px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <p class="eyebrow">Análisis técnico · Renovación Data Center</p>
+    <h1>Convergente o hiperconvergente</h1>
+    <p class="sub">Qué arquitectura conviene para los 13 nodos de cómputo, procesamiento y almacenamiento entre sitio principal y sitio alterno.</p>
+  </header>
+
+  <nav id="tabnav">
+    <button class="navlink active" data-target="contexto" type="button">Contexto</button>
+    <button class="navlink" data-target="arquitectura" type="button">Arquitectura</button>
+    <button class="navlink" data-target="economico" type="button">Económico</button>
+    <button class="navlink" data-target="operativo" type="button">Operativo</button>
+    <button class="navlink" data-target="riesgo" type="button">Riesgo y continuidad</button>
+    <button class="navlink" data-target="recomendacion" type="button">Recomendación</button>
+  </nav>
+
+  <section id="contexto">
+    <h2>Punto de partida</h2>
+    <p class="lede">El Data Center institucional opera hoy al límite, con equipos que superaron por mucho su vida útil.</p>
+    <div class="metrics">
+      <div class="metric"><div class="num">21+ años</div><div class="lab">antigüedad del equipamiento crítico</div></div>
+      <div class="metric"><div class="num">88,89%</div><div class="lab">de la infraestructura fuera de vida útil</div></div>
+      <div class="metric"><div class="num">84–96%</div><div class="lab">uso actual de CPU, RAM y almacenamiento</div></div>
+      <div class="metric"><div class="num">13 nodos</div><div class="lab">a desplegar: 7 sitio principal + 6 sitio alterno</div></div>
+    </div>
+    <div class="objetivo">
+      <b>Objetivo de la adquisición:</b> fortalecer la infraestructura del Data Center institucional mediante servidores de alto rendimiento que incrementen capacidad de procesamiento, memoria y almacenamiento, optimicen el desempeño de las aplicaciones institucionales y permitan escalabilidad futura.
+    </div>
+    <h3 class="sub-h">Dos datos que cambian el análisis</h3>
+    <p style="font-size:14px;color:var(--ink-soft);">La plataforma Nutanix adquirida hace un año está dedicada en exclusiva al Proyecto Tránsito de la Policía Nacional — sus recursos no están disponibles para esta consolidación, así que esta decisión arranca de cero, no es una ampliación de lo que ya existe. Además, el presupuesto institucional ya no alcanzó para renovar las licencias VMware vSphere/vCenter tras el cambio de modelo de licenciamiento de Broadcom, lo que dejó la plataforma de virtualización actual sin soporte. Cualquier arquitectura nueva hereda ese mismo riesgo si vuelve a depender de un solo proveedor para fijar el precio del software año a año.</p>
+  </section>
+
+  <section id="arquitectura">
+    <h2>Cómo se ve cada arquitectura</h2>
+    <p class="lede">La pregunta de fondo es dónde vive el almacenamiento y cuántos proveedores quedan dentro de esa decisión.</p>
+    <div class="cols2">
+      <div class="arch-card featured">
+        <span class="tag tag-conv">Convergente</span>
+        <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
+          <g font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">
+            <rect x="10" y="10" width="44" height="36" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
+            <rect x="64" y="10" width="44" height="36" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
+            <rect x="118" y="10" width="44" height="36" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
+            <rect x="172" y="10" width="44" height="36" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
+            <rect x="226" y="10" width="44" height="36" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
+            <rect x="280" y="10" width="44" height="36" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
+            <text x="32" y="32">CPU</text><text x="86" y="32">CPU</text><text x="140" y="32">CPU</text>
+            <text x="194" y="32">CPU</text><text x="248" y="32">CPU</text><text x="302" y="32">CPU</text>
+          </g>
+          <rect x="10" y="68" width="314" height="22" rx="4" fill="#8FB4CB" opacity="0.35"/>
+          <text x="167" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">red SAN dedicada — fabric / switches</text>
+          <line x1="32" y1="46" x2="32" y2="68" stroke="#8FB4CB" stroke-width="1.5"/>
+          <line x1="140" y1="46" x2="140" y2="68" stroke="#8FB4CB" stroke-width="1.5"/>
+          <line x1="248" y1="46" x2="248" y2="68" stroke="#8FB4CB" stroke-width="1.5"/>
+          <line x1="100" y1="90" x2="100" y2="112" stroke="#8FB4CB" stroke-width="1.5"/>
+          <line x1="234" y1="90" x2="234" y2="112" stroke="#8FB4CB" stroke-width="1.5"/>
+          <rect x="70" y="112" width="60" height="46" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
+          <rect x="204" y="112" width="60" height="46" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
+          <text x="100" y="136" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">storage</text>
+          <text x="100" y="146" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">empresarial</text>
+          <text x="234" y="136" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">storage</text>
+          <text x="234" y="146" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">empresarial</text>
+        </svg>
+        <p>Cómputo (cualquier marca x86) y almacenamiento empresarial dedicado son capas separadas. Cada capa se renueva, escala y se reemplaza de forma independiente.</p>
+      </div>
+      <div class="arch-card">
+        <span class="tag tag-hci">Hiperconvergente</span>
+        <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <rect x="10" y="20" width="44" height="60" rx="6" fill="#F4E4DB" stroke="#D98E68"/>
+            <rect x="64" y="20" width="44" height="60" rx="6" fill="#F4E4DB" stroke="#D98E68"/>
+            <rect x="118" y="20" width="44" height="60" rx="6" fill="#F4E4DB" stroke="#D98E68"/>
+            <rect x="172" y="20" width="44" height="60" rx="6" fill="#F4E4DB" stroke="#D98E68"/>
+            <rect x="226" y="20" width="44" height="60" rx="6" fill="#F4E4DB" stroke="#D98E68"/>
+            <rect x="280" y="20" width="44" height="60" rx="6" fill="#F4E4DB" stroke="#D98E68"/>
+            <g font-family="JetBrains Mono, monospace" font-size="8" fill="#8C3A1B" text-anchor="middle">
+              <text x="32" y="46">CPU</text><text x="32" y="58">+disco</text>
+              <text x="86" y="46">CPU</text><text x="86" y="58">+disco</text>
+              <text x="140" y="46">CPU</text><text x="140" y="58">+disco</text>
+              <text x="194" y="46">CPU</text><text x="194" y="58">+disco</text>
+              <text x="248" y="46">CPU</text><text x="248" y="58">+disco</text>
+              <text x="302" y="46">CPU</text><text x="302" y="58">+disco</text>
+            </g>
+            <line x1="20" y1="100" x2="320" y2="100" stroke="#D98E68" stroke-width="1.5"/>
+            <line x1="32" y1="80" x2="32" y2="100" stroke="#D98E68" stroke-width="1.5"/>
+            <line x1="86" y1="80" x2="86" y2="100" stroke="#D98E68" stroke-width="1.5"/>
+            <line x1="140" y1="80" x2="140" y2="100" stroke="#D98E68" stroke-width="1.5"/>
+            <text x="170" y="125" font-family="JetBrains Mono, monospace" font-size="8" fill="#8C3A1B" text-anchor="middle">sistema integrado — un solo fabricante</text>
+            <text x="170" y="140" font-family="JetBrains Mono, monospace" font-size="8" fill="#8C3A1B" text-anchor="middle">hardware + software de fábrica</text>
+          </g>
+        </svg>
+        <p>Cada nodo trae cómputo y almacenamiento integrados de fábrica como un solo producto. No se aceptan nodos compatibles ni "Ready Nodes" de otros ensambladores.</p>
+      </div>
+    </div>
+
+    <div class="topo">
+      <svg viewBox="0 0 700 140" xmlns="http://www.w3.org/2000/svg">
+        <rect x="40" y="35" width="160" height="70" rx="8" fill="#F1EFE8" stroke="#B4B2A9"/>
+        <text x="120" y="65" font-family="JetBrains Mono, monospace" font-size="11" fill="#444441" text-anchor="middle">Sitio principal</text>
+        <text x="120" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="#5F5E5A" text-anchor="middle">7 nodos · 725 TB</text>
+        <rect x="500" y="35" width="160" height="70" rx="8" fill="#F1EFE8" stroke="#B4B2A9"/>
+        <text x="580" y="65" font-family="JetBrains Mono, monospace" font-size="11" fill="#444441" text-anchor="middle">Sitio alterno</text>
+        <text x="580" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="#5F5E5A" text-anchor="middle">6 nodos · 507 TB</text>
+        <line x1="200" y1="70" x2="500" y2="70" stroke="#888780" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <text x="350" y="58" font-family="JetBrains Mono, monospace" font-size="9" fill="#5F5E5A" text-anchor="middle">replicación DR</text>
+        <path d="M495 70 L505 65 L505 75 Z" fill="#888780"/>
+        <path d="M205 70 L195 65 L195 75 Z" fill="#888780"/>
+      </svg>
+      <p>Ambas arquitecturas deben cumplir la misma exigencia funcional: réplica entre sitio principal y alterno para continuidad operativa.</p>
+    </div>
+
+    <table>
+      <tr><th>Capa</th><th>Convergente</th><th>Hiperconvergente</th></tr>
+      <tr><td>Cómputo</td><td class="conv-col">Servidores x86 de cualquier fabricante</td><td class="hci-col">Nodos integrados de un solo fabricante</td></tr>
+      <tr><td>Almacenamiento</td><td class="conv-col">Storage empresarial dedicado, escalable por separado</td><td class="hci-col">Distribuido entre nodos, crece junto con el cómputo</td></tr>
+      <tr><td>Hipervisor</td><td class="conv-col">VMware (sin vSAN)</td><td class="hci-col">VMware con vSAN</td></tr>
+      <tr><td>Reemplazo de componentes</td><td class="conv-col">Capa por capa, de forma independiente</td><td class="hci-col">El "sistema integrado" se reemplaza como bloque único</td></tr>
+    </table>
+  </section>
+
+  <section id="economico">
+    <h2>Comparativa económica</h2>
+    <p class="lede">A esta escala, ambas opciones usan VMware como hipervisor — el costo de licenciamiento por core de Broadcom aplica igual en las dos. La diferencia económica real está en otro lugar.</p>
+
+    <div class="callout">
+      <span class="ic">!</span>
+      <p>El presupuesto de la institución ya no alcanzó para renovar vSphere/vCenter bajo el modelo de licenciamiento de Broadcom. Sea cual sea la arquitectura elegida, ese costo de licenciamiento por core hay que cuantificarlo con cifras reales antes de comprometer un número con la entidad — en convergente y en hiperconvergente por igual.</p>
+    </div>
+
+    <h3 class="sub-h">Dónde sí cambia el costo</h3>
+    <table>
+      <tr><th>Componente</th><th>Convergente</th><th>Hiperconvergente</th></tr>
+      <tr><td>Escalamiento de storage</td><td class="conv-col">Se amplía solo la cabina, sin comprar cómputo de más</td><td class="hci-col">Cada TB adicional llega empotrado en un nodo completo de cómputo</td></tr>
+      <tr><td>Renovación tecnológica</td><td class="conv-col">Cada capa se renueva por separado, en su propio ciclo</td><td class="hci-col">El "sistema integrado" se renueva como bloque, con el ciclo de un solo fabricante</td></tr>
+      <tr><td>Competencia entre proveedores</td><td class="conv-col">Cómputo, storage y red se cotizan por separado</td><td class="hci-col">Pocos fabricantes ofrecen "sistema integrado", menos cotizaciones competitivas</td></tr>
+      <tr><td>Backup</td><td class="conv-col">Appliance dedicado, igual en ambos escenarios (ya exigido en el pliego)</td><td class="hci-col">Appliance dedicado, igual en ambos escenarios (ya exigido en el pliego)</td></tr>
+    </table>
+    <p class="note">El requerimiento de respaldo (Lote 1, ítems 3 y 4) ya exige un appliance de backup de propósito específico independiente de la plataforma de cómputo — eso no cambia entre opciones.</p>
+  </section>
+
+  <section id="operativo">
+    <h2>Comparativa operativa</h2>
+    <p class="lede">DNTIC ya está construyendo un equipo de seguridad y operación más maduro — WAF, XDR y PAM forman parte de esta misma adquisición. Esa madurez técnica es justamente lo que permite aprovechar mejor una arquitectura con más capas que administrar.</p>
+    <table>
+      <tr><th>Aspecto</th><th>Convergente</th><th>Hiperconvergente</th></tr>
+      <tr><td>Control granular de storage</td><td class="conv-col">Tiering, QoS y políticas a nivel de volumen, gestionadas por el equipo de storage</td><td class="hci-col">Gestión simplificada, pero como caja cerrada del fabricante</td></tr>
+      <tr><td>Consumo multi-protocolo</td><td class="conv-col">El storage empresarial expone bloques, NFS, SMB y S3 de forma nativa para distintos consumidores (video wall, evidencias, bases de datos)</td><td class="hci-col">También lo ofrece, pero atado al stack de software del fabricante de HCI</td></tr>
+      <tr><td>Curva de aprendizaje</td><td class="conv-col">Requiere un perfil de storage además del de virtualización</td><td class="hci-col">Una sola consola, menor curva inicial</td></tr>
+      <tr><td>Independencia de hipervisor</td><td class="conv-col">El storage sigue sirviendo aunque cambie el hipervisor a futuro</td><td class="hci-col">El storage está definido por software y vive dentro del mismo stack que el hipervisor</td></tr>
+    </table>
+
+    <div class="adv-grid">
+      <div class="adv-card adv-conv">
+        <h3>Ventaja real de convergente aquí</h3>
+        <ul>
+          <li>Cada capa se puede reemplazar o renovar sin tocar las demás</li>
+          <li>Más proveedores pueden cotizar cómputo y storage por separado</li>
+          <li>El equipo técnico que ya se está formando con WAF/XDR/PAM puede operar storage a nivel granular</li>
+        </ul>
+      </div>
+      <div class="adv-card adv-hci">
+        <h3>Ventaja real de hiperconvergente aquí</h3>
+        <ul>
+          <li>Una sola consola para cómputo, storage y virtualización</li>
+          <li>Despliegue inicial más simple, menos piezas que integrar</li>
+          <li>Un solo proveedor para escalar la totalidad del stack</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="riesgo">
+    <h2>Riesgo y continuidad</h2>
+    <p class="lede">Esta es la pregunta que más le sirve a la entidad: ¿cuántos proveedores distintos sostienen la arquitectura nueva?</p>
+
+    <div class="lock-bar-row">
+      <div class="lab"><span>Convergente — capas independientes</span><span class="mono">3 proveedores distintos</span></div>
+      <div class="lock-track">
+        <div class="lock-seg" style="width:34%;background:#3E6B8A;"></div>
+        <div class="lock-seg" style="width:33%;background:#8FB4CB;"></div>
+        <div class="lock-seg" style="width:33%;background:#C4D7E2;"></div>
+      </div>
+    </div>
+    <div class="lock-bar-row">
+      <div class="lab"><span>Hiperconvergente — sistema integrado</span><span class="mono">1 proveedor para todo</span></div>
+      <div class="lock-track">
+        <div class="lock-seg" style="width:100%;background:#B5562B;"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="ic">!</span>
+      <p>La plataforma de virtualización actual quedó sin soporte porque dependía de un solo proveedor que cambió las reglas de licenciamiento de un año a otro. Un "sistema integrado" hiperconvergente reproduce exactamente ese mismo patrón de dependencia — hardware, software y soporte de un único fabricante — con la diferencia de que ahora también incluiría el almacenamiento dentro de ese mismo punto único de control.</p>
+    </div>
+  </section>
+
+  <section id="recomendacion">
+    <h2>Recomendación</h2>
+
+    <div class="reframe">
+      <p class="wrong">"La hiperconvergencia es más moderna, por eso conviene."</p>
+      <p class="right">La pregunta correcta es cuál arquitectura evita repetir la dependencia de proveedor único que dejó sin soporte la plataforma actual — no cuál tecnología suena más nueva.</p>
+    </div>
+
+    <div class="rec-box">
+      <p class="tag">Conclusión</p>
+      <p>Para este entorno, una arquitectura convergente con storage empresarial dedicado preserva la capacidad de cotizar y renovar cada capa por separado, evitando que toda la plataforma quede otra vez sujeta a las decisiones comerciales de un solo fabricante. Cumple los mismos requisitos funcionales de réplica y continuidad entre sitios que exige el proyecto, sin concentrar cómputo, almacenamiento y software en un único proveedor.</p>
+    </div>
+
+    <ol class="steps">
+      <li>Confirmar si el pliego de especificaciones técnicas sigue en fase de borrador o ya fue publicado</li>
+      <li>Si ya está en especificaciones técnicas de Lote 1, revisar si el lenguaje de "sistema integrado, sin SAN tradicional ni Ready Nodes" deja a un único tipo de proveedor en condiciones de cumplir — eso reduce la competencia que la propia entidad necesita para obtener mejor valor</li>
+      <li>Cuantificar el costo real de licenciamiento Broadcom por core en ambos escenarios antes de presentar cifras a la entidad</li>
+      <li>Preparar el argumento de continuidad operativa y libre concurrencia de proveedores como base técnica de la propuesta</li>
+    </ol>
+  </section>
+
+  <footer>Coresolutions · Infraestructura y Cloud</footer>
+</div>
+
+<script>
+  var sections = document.querySelectorAll('section');
+  var links = document.querySelectorAll('#tabnav .navlink');
+  links.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var target = document.getElementById(btn.dataset.target);
+      if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        links.forEach(function(l){ l.classList.remove('active'); });
+        var match = document.querySelector('#tabnav .navlink[data-target="' + entry.target.id + '"]');
+        if(match) match.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(function(s){ observer.observe(s); });
+</script>
+</body>
+</html>
