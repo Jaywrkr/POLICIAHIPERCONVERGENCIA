@@ -151,7 +151,7 @@
     <p class="lede">La pregunta de fondo es dónde vive el almacenamiento y cuántos proveedores quedan dentro de esa decisión.</p>
     <div class="cols2">
       <div class="arch-card featured">
-        <span class="tag tag-conv">Convergente</span>
+        <span class="tag tag-conv">VMware + IBM Storage</span>
         <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
           <g font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">
             <rect x="10" y="10" width="44" height="36" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
@@ -172,15 +172,15 @@
           <line x1="234" y1="90" x2="234" y2="112" stroke="#8FB4CB" stroke-width="1.5"/>
           <rect x="70" y="112" width="60" height="46" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
           <rect x="204" y="112" width="60" height="46" rx="6" fill="#E3EBF0" stroke="#8FB4CB"/>
-          <text x="100" y="136" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">storage</text>
-          <text x="100" y="146" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">empresarial</text>
-          <text x="234" y="136" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">storage</text>
-          <text x="234" y="146" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">empresarial</text>
+          <text x="100" y="136" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">IBM</text>
+          <text x="100" y="146" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">Storage</text>
+          <text x="234" y="136" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">IBM</text>
+          <text x="234" y="146" font-family="JetBrains Mono, monospace" font-size="8" fill="#1F4E66" text-anchor="middle">Storage</text>
         </svg>
-        <p>Cómputo (cualquier marca x86) y almacenamiento empresarial dedicado son capas separadas. Cada capa se renueva, escala y se reemplaza de forma independiente.</p>
+        <p>Cómputo virtualizado con VMware (sin vSAN) y almacenamiento dedicado IBM Storage son capas separadas. Cada capa se renueva, escala y se reemplaza de forma independiente.</p>
       </div>
       <div class="arch-card">
-        <span class="tag tag-hci">Hiperconvergente</span>
+        <span class="tag tag-hci">Lenovo + VMware vSAN</span>
         <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
           <g>
             <rect x="10" y="20" width="44" height="60" rx="6" fill="#F4E4DB" stroke="#D98E68"/>
@@ -201,11 +201,11 @@
             <line x1="32" y1="80" x2="32" y2="100" stroke="#D98E68" stroke-width="1.5"/>
             <line x1="86" y1="80" x2="86" y2="100" stroke="#D98E68" stroke-width="1.5"/>
             <line x1="140" y1="80" x2="140" y2="100" stroke="#D98E68" stroke-width="1.5"/>
-            <text x="170" y="125" font-family="JetBrains Mono, monospace" font-size="8" fill="#8C3A1B" text-anchor="middle">sistema integrado — un solo fabricante</text>
-            <text x="170" y="140" font-family="JetBrains Mono, monospace" font-size="8" fill="#8C3A1B" text-anchor="middle">hardware + software de fábrica</text>
+            <text x="170" y="125" font-family="JetBrains Mono, monospace" font-size="8" fill="#8C3A1B" text-anchor="middle">Lenovo + VMware vSAN</text>
+            <text x="170" y="140" font-family="JetBrains Mono, monospace" font-size="8" fill="#8C3A1B" text-anchor="middle">sistema integrado de fábrica</text>
           </g>
         </svg>
-        <p>Cada nodo trae cómputo y almacenamiento integrados de fábrica como un solo producto. No se aceptan nodos compatibles ni "Ready Nodes" de otros ensambladores.</p>
+        <p>Cada nodo trae cómputo y almacenamiento integrados de fábrica con VMware vSAN como un solo producto. No se aceptan nodos compatibles ni "Ready Nodes" de otros ensambladores.</p>
       </div>
     </div>
 
@@ -228,7 +228,7 @@
     <table>
       <tr><th>Capa</th><th>Convergente</th><th>Hiperconvergente</th></tr>
       <tr><td>Cómputo</td><td class="conv-col">Servidores x86 de cualquier fabricante</td><td class="hci-col">Nodos integrados de un solo fabricante</td></tr>
-      <tr><td>Almacenamiento</td><td class="conv-col">Storage empresarial dedicado, escalable por separado</td><td class="hci-col">Distribuido entre nodos, crece junto con el cómputo</td></tr>
+      <tr><td>Almacenamiento</td><td class="conv-col">IBM Storage, escalable por separado</td><td class="hci-col">Distribuido entre nodos, crece junto con el cómputo</td></tr>
       <tr><td>Hipervisor</td><td class="conv-col">VMware (sin vSAN)</td><td class="hci-col">VMware con vSAN</td></tr>
       <tr><td>Reemplazo de componentes</td><td class="conv-col">Capa por capa, de forma independiente</td><td class="hci-col">El "sistema integrado" se reemplaza como bloque único</td></tr>
     </table>
@@ -260,7 +260,7 @@
     <table>
       <tr><th>Aspecto</th><th>Convergente</th><th>Hiperconvergente</th></tr>
       <tr><td>Control granular de storage</td><td class="conv-col">Tiering, QoS y políticas a nivel de volumen, gestionadas por el equipo de storage</td><td class="hci-col">Gestión simplificada, pero como caja cerrada del fabricante</td></tr>
-      <tr><td>Consumo multi-protocolo</td><td class="conv-col">El storage empresarial expone bloques, NFS, SMB y S3 de forma nativa para distintos consumidores (video wall, evidencias, bases de datos)</td><td class="hci-col">También lo ofrece, pero atado al stack de software del fabricante de HCI</td></tr>
+      <tr><td>Consumo multi-protocolo</td><td class="conv-col">IBM Storage expone bloques, NFS, SMB y S3 de forma nativa para distintos consumidores (video wall, evidencias, bases de datos)</td><td class="hci-col">También lo ofrece, pero atado al stack de software del fabricante de HCI</td></tr>
       <tr><td>Curva de aprendizaje</td><td class="conv-col">Requiere un perfil de storage además del de virtualización</td><td class="hci-col">Una sola consola, menor curva inicial</td></tr>
       <tr><td>Independencia de hipervisor</td><td class="conv-col">El storage sigue sirviendo aunque cambie el hipervisor a futuro</td><td class="hci-col">El storage está definido por software y vive dentro del mismo stack que el hipervisor</td></tr>
     </table>
@@ -290,7 +290,7 @@
     <p class="lede">Esta es la pregunta que más le sirve a la entidad: ¿cuántos proveedores distintos sostienen la arquitectura nueva?</p>
 
     <div class="lock-bar-row">
-      <div class="lab"><span>Convergente — capas independientes</span><span class="mono">3 proveedores distintos</span></div>
+      <div class="lab"><span>VMware + IBM Storage — capas independientes</span><span class="mono">3 proveedores distintos</span></div>
       <div class="lock-track">
         <div class="lock-seg" style="width:34%;background:#3E6B8A;"></div>
         <div class="lock-seg" style="width:33%;background:#8FB4CB;"></div>
@@ -298,7 +298,7 @@
       </div>
     </div>
     <div class="lock-bar-row">
-      <div class="lab"><span>Hiperconvergente — sistema integrado</span><span class="mono">1 proveedor para todo</span></div>
+      <div class="lab"><span>Lenovo + VMware vSAN — sistema integrado</span><span class="mono">1 proveedor para todo</span></div>
       <div class="lock-track">
         <div class="lock-seg" style="width:100%;background:#B5562B;"></div>
       </div>
@@ -320,15 +320,8 @@
 
     <div class="rec-box">
       <p class="tag">Conclusión</p>
-      <p>Para este entorno, una arquitectura convergente con storage empresarial dedicado preserva la capacidad de cotizar y renovar cada capa por separado, evitando que toda la plataforma quede otra vez sujeta a las decisiones comerciales de un solo fabricante. Cumple los mismos requisitos funcionales de réplica y continuidad entre sitios que exige el proyecto, sin concentrar cómputo, almacenamiento y software en un único proveedor.</p>
+      <p>Para este entorno, una arquitectura convergente con VMware y almacenamiento dedicado IBM Storage preserva la capacidad de cotizar y renovar cada capa por separado, evitando que toda la plataforma quede otra vez sujeta a las decisiones comerciales de un solo fabricante. Cumple los mismos requisitos funcionales de réplica y continuidad entre sitios que exige el proyecto, sin concentrar cómputo, almacenamiento y software en un único proveedor.</p>
     </div>
-
-    <ol class="steps">
-      <li>Confirmar si el pliego de especificaciones técnicas sigue en fase de borrador o ya fue publicado</li>
-      <li>Si ya está en especificaciones técnicas de Lote 1, revisar si el lenguaje de "sistema integrado, sin SAN tradicional ni Ready Nodes" deja a un único tipo de proveedor en condiciones de cumplir — eso reduce la competencia que la propia entidad necesita para obtener mejor valor</li>
-      <li>Cuantificar el costo real de licenciamiento Broadcom por core en ambos escenarios antes de presentar cifras a la entidad</li>
-      <li>Preparar el argumento de continuidad operativa y libre concurrencia de proveedores como base técnica de la propuesta</li>
-    </ol>
   </section>
 
   <footer>Coresolutions · Infraestructura y Cloud</footer>
